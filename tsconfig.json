@@ -1,0 +1,19 @@
+{
+    "ts-node": {
+        "esm": true,
+        "experimentalSpecifierResolution": "node"
+    },
+    "compilerOptions": {
+        "module": "ES2020",
+        "esModuleInterop": true,
+        "target": "es6",
+        "moduleResolution": "node",
+        "sourceMap": true,
+        "outDir": "dist",
+        "noImplicitAny": true,
+        "typeRoots": ["declarations.d.ts"]
+    },
+    "lib": [
+        "es2015"
+    ]
+}
