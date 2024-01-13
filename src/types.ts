@@ -23,11 +23,7 @@ export type TypedRequestParams<T extends object> = Request<{}, {}, {}, {
     page: string;
     sort?: keyof T;
     order?: "ascend" | "descend";
-    name?: string;
-    categories?: string;
-    sku?: string;
-    brand?: string;
-}>;
+} & Record<Partial<keyof T>, string>>;
 
 export interface IProductPayload {
     name: string;
@@ -38,4 +34,10 @@ export interface IProductPayload {
     quantity: string;
     categories?: string;
     description?: string;
+}
+
+export interface ICategoryPayload {
+    name: string;
+    shortDescription?: string;
+    longDescription?: string;
 }

@@ -9,17 +9,20 @@ const CategorySchema = new mongoose.Schema<ICategory>(
             max: 50,
             unique: true,
         },
-        image: {
-            type: {
-                originalname: String,
-                filename: String,
-                path: String,
-            },
-            required: false,
+        images: {
+            type: [
+                {
+                    originalname: String,
+                    filename: String,
+                    path: String,
+                },
+            ],
         },
-        description: {
+        shortDescription: {
             type: String,
-            required: false,
+        },
+        longDescription: {
+            type: String,
         },
     },
     {

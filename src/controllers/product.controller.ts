@@ -102,9 +102,7 @@ class ProductController {
     ): Promise<void> {
         try {
             const { brands, categories, units } = await productService.getFormOptions();
-            res.json({
-                brands, categories, units,
-            });
+            res.json({ brands, categories, units });
         } catch (error) {
             next(error);
         }

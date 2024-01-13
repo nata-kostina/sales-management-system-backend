@@ -2,8 +2,6 @@
 /* eslint-disable @typescript-eslint/ban-types */
 import { FilterQuery, Types } from "mongoose";
 import { promises as fs } from "fs";
-import path from "path";
-import { __dirname } from "../../constants";
 import { ProductDto } from "../dtos/product/product.dto";
 import { Product } from "../models/product/product.model";
 import { ICategory } from "../models/category/category.interface";
@@ -15,6 +13,7 @@ import { UnitDto } from "../dtos/unit/unit.dto";
 import { BrandDto } from "../dtos/brand/brand.dto";
 import { IProduct } from "../models/product/product.interface";
 import { IProductDb } from "../dtos/product/product_db.interface";
+import { uploadsPath } from "../../constants";
 
 class ProductService {
     public async getProducts(
@@ -98,7 +97,7 @@ class ProductService {
         id: string,
     ): Promise<ProductDto> {
         const product = await Product.findOne({ _id: id });
-        const uploadsPath = path.join(__dirname, "uploads");
+
         product.images.forEach((i) => fs.unlink(`${uploadsPath}/${i.filename}`));
 
         await product.updateOne({ ...payload });
@@ -148,6 +147,8 @@ class ProductService {
     }
 
     public async deleteProduct(products: string[]): Promise<void> {
+        const productsToDelete = await Product.findOne({ _id: { $in: products } });
+        await Promise.all(productsToDelete.images.map((i) => fs.unlink(`${uploadsPath}/${i.filename}`)));
         await Product.deleteMany({ _id: { $in: products } });
     }
 

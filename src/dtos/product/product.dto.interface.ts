@@ -6,12 +6,12 @@ import { IUnitDto } from "../unit/unit.dto.interface";
 export interface IProductDto {
     id: string;
     name: string;
-    sku: string;
+    sku: string | null;
     brand: IBrandDto | null;
     price: number;
     quantity: number;
     images: IImage[];
     unit: IUnitDto | null;
-    description: string;
+    description: string | null;
     categories: ICategoryDto[];
 }

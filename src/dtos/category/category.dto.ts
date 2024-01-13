@@ -6,13 +6,15 @@ import { IImage } from "../../types";
 export class CategoryDto implements ICategoryDto {
     public id: string;
     public name: string;
-    public image: IImage;
-    public description: string;
+    public images: IImage[];
+    public shortDescription: string;
+    public longDescription: string;
 
     public constructor(model: ICategory & { _id: Types.ObjectId; }) {
         this.id = model._id.toString();
         this.name = model.name;
-        this.image = model.image;
-        this.description = model.description;
+        this.images = model.images;
+        this.shortDescription = model.shortDescription;
+        this.longDescription = model.longDescription;
     }
 }

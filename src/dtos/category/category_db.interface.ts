@@ -1,7 +1,6 @@
 import { IImage } from "../../types";
 
-export interface ICategoryDto {
-    id: string;
+export interface ICategoryDb {
     name: string;
     images: IImage[];
     shortDescription: string | null;

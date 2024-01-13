@@ -37,11 +37,12 @@ export class ProductDto implements IProductDto {
             name: model.unit.name,
         } : null;
         this.description = model.description;
-        this.categories = model.categories.map(({ _id, description, image, name }) => ({
+        this.categories = model.categories.map(({ _id, shortDescription, longDescription, images, name }) => ({
             id: _id.toString(),
             name,
-            description,
-            image,
+            shortDescription,
+            longDescription,
+            images,
         }));
     }
 }
