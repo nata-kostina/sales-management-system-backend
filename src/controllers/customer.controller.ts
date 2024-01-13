@@ -6,7 +6,7 @@ class CustomerController {
     public async getCustomers(
         req: Request,
         res: Response,
-        next: NextFunction
+        next: NextFunction,
     ): Promise<void> {
         try {
             let page = Number(req.query.p);
@@ -18,7 +18,7 @@ class CustomerController {
             const customersPerPage = Number(req.query.perPage) || 10;
             const customersData = await productService.getProducts(
                 page * customersPerPage,
-                customersPerPage
+                customersPerPage,
             );
             const total = await Customer.count();
             res.json({

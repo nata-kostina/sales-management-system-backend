@@ -12,7 +12,7 @@ interface TypedRequest extends Request {
 export function authMiddleware(
     req: TypedRequest,
     res: Response,
-    next: NextFunction
+    next: NextFunction,
 ): void {
     try {
         const authorizationHeader = req.headers.authorization;

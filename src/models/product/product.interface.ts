@@ -3,12 +3,12 @@ import { IImage } from "../../types";
 
 export interface IProduct {
     name: string;
-    sku: string;
-    brand: Schema.Types.ObjectId;
+    sku: string | null;
+    brand: Schema.Types.ObjectId | null;
     price: number;
     quantity: number;
     images: IImage[];
-    unit: Schema.Types.ObjectId;
-    description: string;
+    unit: Schema.Types.ObjectId | null;
+    description: string | null;
     categories: Schema.Types.ObjectId[];
 }

@@ -1,12 +1,12 @@
 import { NextFunction, Response, Request } from "express";
 import { productService } from "../services/product.service";
-import { Product } from "../models/product/product.model";
-import { TypedRequestBody } from "../types";
-import { IProduct } from "../models/product/product.interface";
+import { IProductPayload, TypedRequestBody, TypedRequestParams } from "../types";
+import { IProductDto } from "../dtos/product/product.dto.interface";
+import { ProductDbDto } from "../dtos/product/product_db.dto";
 
 class ProductController {
     public async getProducts(
-        req: Request,
+        req: TypedRequestParams<IProductDto>,
         res: Response,
         next: NextFunction,
     ): Promise<void> {
@@ -16,16 +16,19 @@ class ProductController {
                 page = 0;
             }
             const productsPerPage = Number(req.query.perPage) || 10;
-            console.log("page: ", page);
-            console.log("productsPerPage: ", productsPerPage);
-            const productData = await productService.getProducts(
+
+            const { products, total } = await productService.getProducts(
                 page * productsPerPage,
                 productsPerPage,
+                req.query.sort,
+                req.query.order,
+                req.query.name,
+                req.query.categories,
+                req.query.sku,
             );
-            const total = await Product.count();
-            // console.log("total: ", total);
+
             res.json({
-                products: productData,
+                products,
                 page,
                 total,
             });
@@ -51,44 +54,41 @@ class ProductController {
     }
 
     public async editProduct(
-        req: TypedRequestBody<{ product: IProduct & { id: string; }; }>,
+        req: TypedRequestBody<IProductPayload>,
         res: Response,
         next: NextFunction,
     ): Promise<void> {
         try {
             const id = req.params.id;
-            const updatedProduct = await productService.updateProduct(req.body.product, id);
-            res.json({
-                product: updatedProduct,
-            });
+            const productDb = new ProductDbDto(req);
+            const updatedProduct = await productService.updateProduct(productDb, id);
+            res.json({ product: updatedProduct });
         } catch (error) {
             next(error);
         }
     }
 
     public async addProduct(
-        req: TypedRequestBody<{ product: IProduct; }>,
+        req: TypedRequestBody<IProductPayload>,
         res: Response,
         next: NextFunction,
     ): Promise<void> {
         try {
-            const newProduct = await productService.addProduct(req.body.product);
-            res.json({
-                product: newProduct,
-            });
+            const productDb = new ProductDbDto(req);
+            const newProduct = await productService.addProduct(productDb);
+            res.json({ product: newProduct });
         } catch (error) {
             next(error);
         }
     }
 
     public async deleteProduct(
-        req: Request,
+        req: TypedRequestBody<{ products: string[]; }>,
         res: Response,
         next: NextFunction,
     ): Promise<void> {
         try {
-            const id = req.params.id;
-            await productService.deleteProduct(id);
+            await productService.deleteProduct(req.body.products);
             res.json();
         } catch (error) {
             next(error);

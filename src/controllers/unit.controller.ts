@@ -16,6 +16,19 @@ class UnitController {
             next(error);
         }
     }
+
+    public async getUnitList(
+        req: Request,
+        res: Response,
+        next: NextFunction,
+    ): Promise<void> {
+        try {
+            const unitsData = await unitService.getUnitList();
+            res.json({ units: unitsData });
+        } catch (error) {
+            next(error);
+        }
+    }
 }
 
 export const unitController = new UnitController();

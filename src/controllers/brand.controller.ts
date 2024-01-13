@@ -16,6 +16,19 @@ class BrandController {
             next(error);
         }
     }
+
+    public async getBrandList(
+        req: Request,
+        res: Response,
+        next: NextFunction,
+    ): Promise<void> {
+        try {
+            const brandData = await brandService.getBrandList();
+            res.json({ brands: brandData });
+        } catch (error) {
+            next(error);
+        }
+    }
 }
 
 export const brandController = new BrandController();

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 /* eslint-disable @typescript-eslint/no-floating-promises */
 import "dotenv/config";
 import express from "express";
@@ -5,6 +6,8 @@ import morgan from "morgan";
 import cors from "cors";
 import mongoose from "mongoose";
 import cookieParser from "cookie-parser";
+import path from "path";
+import { __dirname } from "./constants";
 import { authRouter } from "./src/routers/auth.router.js";
 import { errorMiddleware } from "./src/middlewares/error.middleware.js";
 import { productRouter } from "./src/routers/product.router.js";
@@ -30,8 +33,11 @@ app.use(
         credentials: true,
     }),
 );
+
+app.use(express.static(path.join(__dirname, "uploads")));
 app.use(cookieParser());
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 const PORT = process.env.PORT || 9000;
 

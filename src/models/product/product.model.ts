@@ -32,15 +32,14 @@ const ProductSchema = new mongoose.Schema<IProduct>(
         images: {
             type: [
                 {
-                    src: String,
-                    name: String,
+                    originalname: String,
+                    filename: String,
+                    path: String,
                 },
             ],
-            required: false,
         },
         description: {
             type: String,
-            required: false,
         },
         categories: {
             type: [
@@ -49,7 +48,6 @@ const ProductSchema = new mongoose.Schema<IProduct>(
                     ref: "Category",
                 },
             ],
-            required: false,
         },
     },
     {

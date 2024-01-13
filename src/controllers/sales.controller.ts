@@ -6,7 +6,7 @@ class SalesController {
     public async getSales(
         req: Request,
         res: Response,
-        next: NextFunction
+        next: NextFunction,
     ): Promise<void> {
         try {
             let page = Number(req.query.p);
@@ -18,7 +18,7 @@ class SalesController {
             const salesPerPage = Number(req.query.perPage) || 10;
             const salesData = await salesService.getProducts(
                 page * salesPerPage,
-                salesPerPage
+                salesPerPage,
             );
             const total = await Sales.count();
             res.json({

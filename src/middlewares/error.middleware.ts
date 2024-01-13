@@ -6,13 +6,10 @@ export function errorMiddleware(
     err: unknown,
     req: Request,
     res: Response,
-    next: NextFunction
+    next: NextFunction,
 ): void {
-    console.log("errorMiddleware");
-    console.log(err);
+    console.log("errorMiddleware: ", err);
     if (err instanceof ApiError) {
-        console.log(err.message);
-        console.log(err.status);
         res.status(err.status).json({
             message: err.message,
             errors: err.errors,

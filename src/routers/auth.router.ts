@@ -11,10 +11,10 @@ authRouter.post(
         check("email", "Incorrect email").isEmail(),
         check(
             "password",
-            "Password must be at least 8 characters long and must not be greater than 15 characters"
+            "Password must be at least 8 characters long and must not be greater than 15 characters",
         ).isLength({ min: 3, max: 15 }),
     ],
-    authController.register
+    authController.register,
 );
 
 authRouter.post(
@@ -23,10 +23,10 @@ authRouter.post(
         check("email", "Incorrect email").isEmail(),
         check(
             "password",
-            "Password must be at least 8 characters long and must not be greater than 15 characters"
+            "Password must be at least 8 characters long and must not be greater than 15 characters",
         ).isLength({ min: 3, max: 15 }),
     ],
-    authController.login
+    authController.login,
 );
 
 authRouter.post("/logout", authController.logout);

@@ -9,6 +9,14 @@ class BrandService {
         );
         return [...brandsDtos];
     }
+
+    public async getBrandList(): Promise<BrandDto[]> {
+        const brands = await Brand.find({}, "name");
+        const brandsDtos: BrandDto[] = brands.map(
+            (brand) => new BrandDto(brand),
+        );
+        return [...brandsDtos];
+    }
 }
 
 export const brandService = new BrandService();

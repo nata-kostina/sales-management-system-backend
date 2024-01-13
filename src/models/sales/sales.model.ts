@@ -33,7 +33,7 @@ const SalesSchema = new mongoose.Schema<ISales>(
     },
     {
         timestamps: true,
-    }
+    },
 );
 
 export const Sales = mongoose.model("Sale", SalesSchema);

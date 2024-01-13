@@ -11,9 +11,9 @@ const stringValidationResult: ResultFactory<string> =
 
 class AuthController {
     public async register(
-        req: TypedRequestBody<{ email: string; password: string }>,
+        req: TypedRequestBody<{ email: string; password: string; }>,
         res: Response,
-        next: NextFunction
+        next: NextFunction,
     ): Promise<void> {
         try {
             const errors = validationResult(req);
@@ -21,8 +21,8 @@ class AuthController {
                 return next(
                     ApiError.BadRequest(
                         "Validation error",
-                        stringValidationResult(req).array()
-                    )
+                        stringValidationResult(req).array(),
+                    ),
                 );
             }
 
@@ -39,9 +39,9 @@ class AuthController {
     }
 
     public async login(
-        req: TypedRequestBody<{ email: string; password: string }>,
+        req: TypedRequestBody<{ email: string; password: string; }>,
         res: Response,
-        next: NextFunction
+        next: NextFunction,
     ): Promise<void> {
         try {
             const errors = validationResult(req);
@@ -49,8 +49,8 @@ class AuthController {
                 return next(
                     ApiError.BadRequest(
                         "Validation error",
-                        stringValidationResult(req).array()
-                    )
+                        stringValidationResult(req).array(),
+                    ),
                 );
             }
             const { email, password } = req.body;
@@ -66,9 +66,9 @@ class AuthController {
     }
 
     public async logout(
-        req: TypedRequestCookies<{ refreshToken: string }>,
+        req: TypedRequestCookies<{ refreshToken: string; }>,
         res: Response,
-        next: NextFunction
+        next: NextFunction,
     ): Promise<void> {
         try {
             const { refreshToken } = req.cookies;
@@ -81,9 +81,9 @@ class AuthController {
     }
 
     public async refresh(
-        req: TypedRequestCookies<{ refreshToken: string }>,
+        req: TypedRequestCookies<{ refreshToken: string; }>,
         res: Response,
-        next: NextFunction
+        next: NextFunction,
     ) {
         try {
             const { refreshToken } = req.cookies;

@@ -7,7 +7,7 @@ import { ApiError } from "../exceptions/api.error";
 class UserService {
     public async register(
         email: string,
-        password: string
+        password: string,
     ): Promise<{
         user: UserDto;
         accessToken: string;
@@ -16,7 +16,7 @@ class UserService {
         const candidate = await User.findOne({ email });
         if (candidate) {
             throw ApiError.BadRequest(
-                "The user with such email already exists"
+                "The user with such email already exists",
             );
         }
         const hashPassword = await bcrypt.hash(password, 7);
@@ -32,7 +32,7 @@ class UserService {
 
     public async login(
         email: string,
-        password: string
+        password: string,
     ): Promise<{
         user: UserDto;
         accessToken: string;

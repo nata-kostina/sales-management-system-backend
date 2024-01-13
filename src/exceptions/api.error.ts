@@ -19,7 +19,7 @@ export class ApiError extends Error implements IApiError {
 
     public static BadRequest(
         message: string,
-        errors: string[] = []
+        errors: string[] = [],
     ): IApiError {
         return new ApiError(400, message, errors);
     }
