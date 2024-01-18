@@ -8,7 +8,11 @@ const CustomerSchema = new mongoose.Schema<ICustomer>(
             required: true,
         },
         country: {
-            type: String,
+            type: {
+                id: Number,
+                name: String,
+            },
+            required: true,
         },
         email: {
             type: String,
@@ -18,6 +22,25 @@ const CustomerSchema = new mongoose.Schema<ICustomer>(
         phone: {
             type: String,
             unique: true,
+            required: true,
+        },
+        city: {
+            type: {
+                id: Number,
+                name: String,
+            },
+            required: true,
+        },
+        state: {
+            type: {
+                id: Number,
+                name: String,
+            },
+            required: true,
+        },
+        address: {
+            type: String,
+            required: true,
         },
     },
     {

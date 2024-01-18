@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/naming-convention */
 /* eslint-disable @typescript-eslint/ban-types */
 import { FilterQuery, Types } from "mongoose";
 import { promises as fs } from "fs";
@@ -28,7 +27,7 @@ class ProductService {
     ): Promise<{ products: ProductDto[]; total: number; }> {
         const filter: FilterQuery<IProduct> = {};
         if (name) {
-            filter.name = { $regex: name };
+            filter.name = { $regex: name, $options: "i" };
         }
         if (categories) {
             filter.categories = { $all: categories.split(",").map((c) => new Types.ObjectId(c)) };
@@ -43,7 +42,7 @@ class ProductService {
             .find(filter)
             .sort({ [sort]: order === "ascend" ? 1 : -1 });
         const total = products.length;
-        const skippedProducts = products.slice(skip, skip + limit);
+        const slicedProducts = products.slice(skip, skip + limit);
         // eslint-disable-next-line no-spaced-func
         const populatedDocuments = await Product.populate<
             {
@@ -57,7 +56,7 @@ class ProductService {
                 };
                 categories: (ICategory & { _id: Types.ObjectId; })[];
             }
-                    >(skippedProducts, [
+                    >(slicedProducts, [
                         { path: "brand", model: "Brand", select: "_id name" },
                         { path: "unit", model: "Unit", select: "_id name" },
                         { path: "categories", model: "Category" },
