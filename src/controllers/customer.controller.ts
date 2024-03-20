@@ -94,6 +94,19 @@ class CustomerController {
             next(error);
         }
     }
+
+    public async getCustomersList(
+        req: TypedRequestParams<ICustomer>,
+        res: Response,
+        next: NextFunction,
+    ): Promise<void> {
+        try {
+            const { customers } = await customerService.getCustomersList(req.query.name);
+            res.json({ customers });
+        } catch (error) {
+            next(error);
+        }
+    }
 }
 
 export const customerController = new CustomerController();

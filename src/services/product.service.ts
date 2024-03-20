@@ -13,6 +13,7 @@ import { BrandDto } from "../dtos/brand/brand.dto";
 import { IProduct } from "../models/product/product.interface";
 import { IProductDb } from "../dtos/product/product_db.interface";
 import { uploadsPath } from "../../constants";
+import { IProductListDto, ProductListDto } from "../dtos/product/product_list.dto";
 
 class ProductService {
     public async getProducts(
@@ -168,6 +169,20 @@ class ProductService {
             units: unitDtos,
             brands: brandDtos,
         };
+    }
+
+    public async getProductsList(name?: string): Promise<{ products: IProductListDto[]; }> {
+        const filter: FilterQuery<IProduct> = {};
+        if (name) {
+            filter.name = { $regex: name, $options: "i" };
+        }
+        console.log({ filter });
+        const products = await Product.find(filter);
+
+        const productDtos: IProductListDto[] = products.map(
+            (product) => new ProductListDto(product),
+        );
+        return { products: productDtos };
     }
 }
 

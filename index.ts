@@ -13,15 +13,20 @@ import { errorMiddleware } from "./src/middlewares/error.middleware.js";
 import { productRouter } from "./src/routers/product.router.js";
 import { categoryRouter } from "./src/routers/category.router.js";
 import { customerRouter } from "./src/routers/customer.router.js";
-import { salesRouter } from "./src/routers/sales.router.js";
+import { saleRouter } from "./src/routers/sale.router.js";
 import { Customer } from "./src/models/customer/customer.model.js";
 import { Category } from "./src/models/category/category.model.js";
-import { Sales } from "./src/models/sales/sales.model.js";
+import { Sale } from "./src/models/sale/sale.model.js";
 import { Product } from "./src/models/product/product.model.js";
 import { Brand } from "./src/models/brand/brand.model.js";
 import { brandRouter } from "./src/routers/brands.router.js";
 import { unitRouter } from "./src/routers/unit.router.js";
 import { Unit } from "./src/models/unit/unit.model.js";
+import { SaleStatus } from "./src/models/sale-status/sales-status.model";
+import { Payment } from "./src/models/payment/payment.model";
+import { EPayment } from "./src/models/payment/payment.interface";
+import { saleStatusesRouter } from "./src/routers/saleStatuses.router";
+import { paymentRouter } from "./src/routers/payment.router";
 
 /* SERVER CONFIGURATION */
 const app = express();
@@ -45,10 +50,12 @@ const PORT = process.env.PORT || 9000;
 app.use("/api/auth", authRouter);
 app.use("/api/categories", categoryRouter);
 app.use("/api/customers", customerRouter);
-app.use("/api/sales", salesRouter);
+app.use("/api/sales", saleRouter);
 app.use("/api/products", productRouter);
 app.use("/api/brands", brandRouter);
 app.use("/api/units", unitRouter);
+app.use("/api/statuses", saleStatusesRouter);
+app.use("/api/payment", paymentRouter);
 
 /* ERROR HANDLER MIDDLEWARE */
 app.use(errorMiddleware);
@@ -60,6 +67,62 @@ mongoose
         app.listen(PORT, () =>
             console.log(`Server is listening on port ${PORT}`),
         );
+
+        // Payment.create({
+        //     name: EPayment.Paid,
+        //     priority: 1,
+        // });
+        // Payment.create({
+        //     name: EPayment.Unpaid,
+        //     priority: 2,
+        // });
+        // Payment.create({
+        //     name: EPayment.Overdue,
+        //     priority: 3,
+        // });
+        // Payment.create({
+        //     name: EPayment.Declined,
+        //     priority: 4,
+        // });
+        // Payment.create({
+        //     name: EPayment.Refunded,
+        //     priority: 5,
+        // });
+        // Payment.create({
+        //     name: EPayment.Cancelled,
+        //     priority: 6,
+        // });
+        // SaleStatus.create({
+        //     name: "Shipped",
+        //     priority: 3,
+        // });
+        // SaleStatus.create({
+        //     name: "Delivered",
+        //     priority: 4,
+        // });
+        // SaleStatus.create({
+        //     name: "Cancelled",
+        //     priority: 5,
+        // });
+        // SaleStatus.create({
+        //     name: "Returned",
+        //     priority: 6,
+        // });
+        // SaleStatus.create({
+        //     name: "In Transit",
+        //     priority: 2,
+        // });
+        // SaleStatus.create({
+        //     name: "Awaiting Payment",
+        //     priority: 1,
+        // });
+        // // Pending = "Pending",
+        // // Shipped = "Shipped",
+        // // Delivered = "Delivered",
+        // // Cancelled = "Cancelled",
+        // // Returned = "Returned",
+        // // InTransit = "In Transit",
+        // // AwaitingPayment = "Awaiting Payment",
         // Category.create({
         //     name: "Baseball bat",
         //     image: {

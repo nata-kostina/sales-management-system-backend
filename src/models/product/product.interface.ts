@@ -1,4 +1,4 @@
-import { Schema } from "mongoose";
+import mongoose, { Schema } from "mongoose";
 import { IImage } from "../../types";
 
 export interface IProduct {
@@ -7,7 +7,7 @@ export interface IProduct {
     brand: Schema.Types.ObjectId | null;
     price: number;
     quantity: number;
-    images: IImage[];
+    images: (IImage & { _id: mongoose.Types.ObjectId; })[];
     unit: Schema.Types.ObjectId | null;
     description: string | null;
     categories: Schema.Types.ObjectId[];

@@ -3,6 +3,7 @@ import { productService } from "../services/product.service";
 import { IProductPayload, TypedRequestBody, TypedRequestParams } from "../types";
 import { IProductDto } from "../dtos/product/product.dto.interface";
 import { ProductDbDto } from "../dtos/product/product_db.dto";
+import { IProduct } from "../models/product/product.interface";
 
 class ProductController {
     public async getProducts(
@@ -103,6 +104,19 @@ class ProductController {
         try {
             const { brands, categories, units } = await productService.getFormOptions();
             res.json({ brands, categories, units });
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    public async getProductsList(
+        req: TypedRequestParams<IProduct>,
+        res: Response,
+        next: NextFunction,
+    ): Promise<void> {
+        try {
+            const products = await productService.getProductsList(req.query.name);
+            res.json(products);
         } catch (error) {
             next(error);
         }

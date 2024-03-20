@@ -17,7 +17,6 @@ class CustomerService {
         phone?: string,
     ): Promise<{ customers: CustomerDto[]; total: number; }> {
         const filter: FilterQuery<ICustomer> = {};
-        console.log({ name });
         if (name) {
             filter.name = { $regex: name, $options: "i" };
         }
@@ -81,6 +80,20 @@ class CustomerService {
 
     public async deleteCustomer(customers: string[]): Promise<void> {
         await Customer.deleteMany({ _id: { $in: customers } });
+    }
+
+    public async getCustomersList(name?: string): Promise<{ customers: CustomerDto[]; }> {
+        const filter: FilterQuery<ICustomer> = {};
+        if (name) {
+            filter.name = { $regex: name, $options: "i" };
+        }
+        console.log({ filter });
+        const customers = await Customer.find(filter);
+
+        const customerDtos: CustomerDto[] = customers.map(
+            (customer) => new CustomerDto(customer),
+        );
+        return { customers: customerDtos };
     }
 }
 

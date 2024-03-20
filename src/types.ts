@@ -41,3 +41,13 @@ export interface ICategoryPayload {
     shortDescription?: string;
     longDescription?: string;
 }
+
+export interface ISalePayload {
+    date: string;
+    customer: string;
+    status: string;
+    payment: string;
+    total: string;
+    paid: string;
+    products: string;
+}

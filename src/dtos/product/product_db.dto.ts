@@ -23,10 +23,10 @@ export class ProductDbDto implements ProductDbDto {
         this.description = body.description ?? null;
         this.categories = body.categories ? JSON.parse(body.categories) : [];
         this.images = files && Array.isArray(files) ?
-            files.map((image) => ({
-                originalname: image.originalname,
-                filename: image.filename,
-                path: image.path,
+            files.map(({ originalname, filename, path }) => ({
+                originalname,
+                filename,
+                path,
             }))
             : [];
     }
