@@ -22,6 +22,7 @@ class CategoryController {
                 categoriesPerPage,
                 req.query.sort,
                 req.query.order,
+                req.query.name,
             );
 
             res.json({
@@ -91,13 +92,32 @@ class CategoryController {
     }
 
     public async deleteCategory(
-        req: TypedRequestBody<{ categories: string[]; }>,
+        req: TypedRequestBody<{ items: string[]; }>,
         res: Response,
         next: NextFunction,
     ): Promise<void> {
         try {
-            await categoryService.deleteCategory(req.body.categories);
+            await categoryService.deleteCategory(req.body.items);
             res.json();
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    public async getCsv(
+        req: TypedRequestBody<{ items: string[]; }>,
+        res: Response,
+        next: NextFunction,
+    ): Promise<void> {
+        try {
+            const fileName = await categoryService.getCsv(req.body.items);
+            res.setHeader("Content-Type", "text/csv");
+            res.download(fileName, (err) => {
+                console.log(err);
+                if (err) {
+                    res.sendStatus(500);
+                }
+            });
         } catch (error) {
             next(error);
         }

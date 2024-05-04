@@ -11,7 +11,7 @@
         "sourceMap": true,
         "outDir": "dist",
         "noImplicitAny": true,
-        "typeRoots": ["declarations.d.ts"]
+        "typeRoots": ["src/index.d.ts"],
     },
     "lib": [
         "es2015"

@@ -5,7 +5,7 @@ import { IImage } from "../../types";
 
 export interface ISaleDto {
     id: string;
-    date: string;
+    date: number;
     customer: ICustomerDto;
     status: ISaleStatusDto;
     payment: IPaymentDto;

@@ -9,6 +9,7 @@ export class CategoryDto implements ICategoryDto {
     public images: IImage[];
     public shortDescription: string;
     public longDescription: string;
+    public deleted = false;
 
     public constructor(model: ICategory & { _id: Types.ObjectId; }) {
         this.id = model._id.toString();

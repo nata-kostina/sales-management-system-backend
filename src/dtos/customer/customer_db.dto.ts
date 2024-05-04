@@ -21,9 +21,11 @@ export class CustomerDbDto implements ICustomer {
     };
 
     public address: string;
+    public deleted: boolean;
     public constructor(
         { body }: TypedRequestBody<Record<keyof ICustomer, string>>,
     ) {
+        console.log("CustomerDbDto: ", body);
         this.name = body.name;
         this.email = body.email;
         this.phone = body.phone;
@@ -31,5 +33,6 @@ export class CustomerDbDto implements ICustomer {
         this.country = JSON.parse(body.country);
         this.state = JSON.parse(body.state);
         this.city = JSON.parse(body.city);
+        this.deleted = false;
     }
 }

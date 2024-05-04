@@ -6,6 +6,7 @@ export class CategoryDbDto implements ICategoryDb {
     public images: IImage[];
     public shortDescription: string | null;
     public longDescription: string | null;
+    public deleted: boolean;
 
     public constructor(
         { body, files }: TypedRequestBody<ICategoryPayload>,
@@ -13,6 +14,7 @@ export class CategoryDbDto implements ICategoryDb {
         this.name = body.name;
         this.shortDescription = body.shortDescription ?? null;
         this.longDescription = body.longDescription ?? null;
+        this.deleted = false;
         this.images = files && Array.isArray(files) ?
             files.map((image) => ({
                 originalname: image.originalname,

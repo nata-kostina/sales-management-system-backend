@@ -28,10 +28,19 @@ export class CustomerDto implements ICustomerDto {
         this.id = model._id.toString();
         this.name = model.name;
         this.email = model.email;
-        this.country = model.country;
-        this.state = model.state;
+        this.country = {
+            id: model.country.id,
+            name: model.country.name,
+        };
+        this.state = {
+            id: model.state.id,
+            name: model.state.name,
+        };
         this.phone = model.phone;
-        this.city = model.city;
+        this.city = {
+            id: model.city.id,
+            name: model.city.name,
+        };
         this.address = model.address;
     }
 }

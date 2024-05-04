@@ -17,11 +17,9 @@ const CustomerSchema = new mongoose.Schema<ICustomer>(
         email: {
             type: String,
             required: true,
-            unique: true,
         },
         phone: {
             type: String,
-            unique: true,
             required: true,
         },
         city: {
@@ -42,6 +40,7 @@ const CustomerSchema = new mongoose.Schema<ICustomer>(
             type: String,
             required: true,
         },
+        deleted: { type: Boolean, default: false },
     },
     {
         timestamps: true,

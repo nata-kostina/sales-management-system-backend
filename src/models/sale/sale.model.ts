@@ -11,7 +11,7 @@ const SalesSchema = new mongoose.Schema<ISale>(
             unique: true,
         },
         date: {
-            type: String,
+            type: Date,
             required: true,
             unique: false,
         },
@@ -72,6 +72,7 @@ const SalesSchema = new mongoose.Schema<ISale>(
             required: true,
             unique: false,
         },
+        deleted: { type: Boolean, default: false },
     },
     {
         timestamps: true,
@@ -105,5 +106,16 @@ export interface PopulatedSaleProduct extends Document {
         quantity: number;
         price: number;
         total: number;
+    };
+}
+
+export interface PopulatedCsvSaleProduct extends Document {
+    _doc: {
+        product: {
+            _id: mongoose.Types.ObjectId;
+            name: string;
+        };
+        quantity: number;
+        price: number;
     };
 }

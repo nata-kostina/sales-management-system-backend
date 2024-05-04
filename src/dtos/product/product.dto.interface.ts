@@ -13,5 +13,5 @@ export interface IProductDto {
     images: IImage[];
     unit: IUnitDto | null;
     description: string | null;
-    categories: ICategoryDto[];
+    categories: (Omit<ICategoryDto, "deleted">)[];
 }

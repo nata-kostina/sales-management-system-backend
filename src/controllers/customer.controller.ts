@@ -55,13 +55,14 @@ class CustomerController {
     }
 
     public async editCustomer(
-        req: TypedRequestBody<ICustomer>,
+        req: TypedRequestBody<Record<keyof ICustomer, string>>,
         res: Response,
         next: NextFunction,
     ): Promise<void> {
         try {
             const id = req.params.id;
-            const customer = await customerService.updateCustomer(req.body, id);
+            const dto = new CustomerDbDto(req);
+            const customer = await customerService.updateCustomer(dto, id);
             res.json({ customer });
         } catch (error) {
             next(error);
@@ -83,12 +84,12 @@ class CustomerController {
     }
 
     public async deleteCustomer(
-        req: TypedRequestBody<{ customers: string[]; }>,
+        req: TypedRequestBody<{ items: string[]; }>,
         res: Response,
         next: NextFunction,
     ): Promise<void> {
         try {
-            await customerService.deleteCustomer(req.body.customers);
+            await customerService.deleteCustomer(req.body.items);
             res.json();
         } catch (error) {
             next(error);
@@ -103,6 +104,25 @@ class CustomerController {
         try {
             const { customers } = await customerService.getCustomersList(req.query.name);
             res.json({ customers });
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    public async getCsv(
+        req: TypedRequestBody<{ items: string[]; }>,
+        res: Response,
+        next: NextFunction,
+    ): Promise<void> {
+        try {
+            const fileName = await customerService.getCsv(req.body.items);
+            res.setHeader("Content-Type", "text/csv");
+            res.download(fileName, (err) => {
+                console.log(err);
+                if (err) {
+                    res.sendStatus(500);
+                }
+            });
         } catch (error) {
             next(error);
         }

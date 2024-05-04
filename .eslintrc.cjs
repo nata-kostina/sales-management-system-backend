@@ -303,7 +303,7 @@ module.exports = {
         "@typescript-eslint/no-non-null-asserted-optional-chain": "warn",
         "@typescript-eslint/no-non-null-assertion": "warn",
         "@typescript-eslint/prefer-as-const": "error",
-        "@typescript-eslint/prefer-for-of": ["error"],
+        "@typescript-eslint/prefer-for-of": ["off"],
         "@typescript-eslint/prefer-namespace-keyword": "error",
         "@typescript-eslint/prefer-optional-chain": "warn",
         "@typescript-eslint/triple-slash-reference": [

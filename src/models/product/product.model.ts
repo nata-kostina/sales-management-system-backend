@@ -8,7 +8,6 @@ const ProductSchema = new mongoose.Schema<IProduct>(
             type: String,
             required: true,
             max: 50,
-            unique: true,
         },
         brand: {
             type: Schema.Types.ObjectId,
@@ -49,6 +48,7 @@ const ProductSchema = new mongoose.Schema<IProduct>(
                 },
             ],
         },
+        deleted: { type: Boolean, default: false },
     },
     {
         timestamps: true,

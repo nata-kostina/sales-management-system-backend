@@ -13,7 +13,7 @@ export class SaleDto implements ISaleDto {
     public id: string;
     public reference: string;
     public customer: ICustomerDto;
-    public date: string;
+    public date: number;
     public status: ISaleStatusDto;
     public payment: IPaymentDto;
     public total: number;
@@ -24,7 +24,7 @@ export class SaleDto implements ISaleDto {
     PopulatedSale) {
         this.id = model._id.toString();
         this.reference = model.reference;
-        this.date = model.date;
+        this.date = model.date.getTime();
         this.paid = model.paid;
         this.total = model.total;
         this.status = {

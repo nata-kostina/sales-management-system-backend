@@ -5,4 +5,5 @@ export interface ICategoryDb {
     images: IImage[];
     shortDescription: string | null;
     longDescription: string | null;
+    deleted: boolean;
 }

@@ -17,7 +17,7 @@ export class ProductDto implements IProductDto {
     public price: number;
     public quantity: number;
     public images: IImageDto[];
-    public categories: ICategoryDto[] | null;
+    public categories: (Omit<ICategoryDto, "deleted">)[] | null;
     public description: string;
 
     public constructor(

@@ -51,3 +51,40 @@ export interface ISalePayload {
     paid: string;
     products: string;
 }
+
+export enum SaleStatisticsOption {
+    ByMonth = "byMonth",
+    ByYear = "byYear",
+}
+
+export type SaleStatisticsData = [period: string, amount: number][];
+export type SaleStatisticsByCategoriesData = Array<Array<string | number>>;
+
+export interface IGetSalesStatisticsResponse {
+    data: SaleStatisticsData;
+    minDate: Date;
+    maxDate: Date;
+}
+
+export interface IGetSalesStatisticsByCategoriesResponse {
+    data: SaleStatisticsByCategoriesData;
+    minDate: Date;
+    maxDate: Date;
+}
+
+export type IGetSalesStatisticsRequest = Request<{}, {}, {}, {
+    option: string;
+    year: string | null;
+} & Record<string, string>>;
+
+export interface IGetGeneralStatisticsResponse {
+    total: number;
+    monthly: {
+        amount: number;
+        change: number;
+    };
+    weekly: {
+        amount: number;
+        change: number;
+    };
+}

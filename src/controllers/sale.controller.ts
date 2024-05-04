@@ -114,13 +114,32 @@ class SaleController {
     }
 
     public async deleteSale(
-        req: TypedRequestBody<{ sales: string[]; }>,
+        req: TypedRequestBody<{ items?: string[]; }>,
         res: Response,
         next: NextFunction,
     ): Promise<void> {
         try {
-            await saleService.deleteSale(req.body.sales);
+            await saleService.deleteSale(req.body.items);
             res.json();
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    public async getCsv(
+        req: TypedRequestBody<{ items: string[]; }>,
+        res: Response,
+        next: NextFunction,
+    ): Promise<void> {
+        try {
+            const fileName = await saleService.getCsv(req.body.items);
+            res.setHeader("Content-Type", "text/csv");
+            res.download(fileName, (err) => {
+                console.log(err);
+                if (err) {
+                    res.sendStatus(500);
+                }
+            });
         } catch (error) {
             next(error);
         }

@@ -9,4 +9,4 @@ const storage = multer.diskStorage({
     },
 });
 
-export const fileMiddleware = multer({ storage });
+export const uploadsMiddleware = multer({ storage });

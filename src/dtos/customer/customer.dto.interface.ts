@@ -17,3 +17,14 @@ export interface ICustomerDto {
     };
     address: string;
 }
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type ICustomerCsvItem = Record<string, any> & {
+    name: string;
+    phone: string;
+    email: string;
+    country: string;
+    state: string;
+    city: string;
+    address: string;
+};

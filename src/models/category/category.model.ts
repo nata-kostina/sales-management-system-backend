@@ -7,7 +7,6 @@ const CategorySchema = new mongoose.Schema<ICategory>(
             type: String,
             required: true,
             max: 50,
-            unique: true,
         },
         images: {
             type: [
@@ -24,6 +23,7 @@ const CategorySchema = new mongoose.Schema<ICategory>(
         longDescription: {
             type: String,
         },
+        deleted: { type: Boolean, default: false },
     },
     {
         timestamps: true,

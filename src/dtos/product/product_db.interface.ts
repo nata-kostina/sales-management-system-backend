@@ -10,4 +10,5 @@ export interface IProductDb {
     unit: string | null;
     description: string | null;
     categories: string[];
+    deleted: boolean;
 }

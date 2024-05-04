@@ -26,6 +26,8 @@ class ProductController {
                 req.query.name,
                 req.query.categories,
                 req.query.sku,
+                req.query.brand,
+                req.query.unit,
             );
 
             res.json({
@@ -83,13 +85,13 @@ class ProductController {
         }
     }
 
-    public async deleteProduct(
-        req: TypedRequestBody<{ products: string[]; }>,
+    public async deleteProducts(
+        req: TypedRequestBody<{ items?: string[]; }>,
         res: Response,
         next: NextFunction,
     ): Promise<void> {
         try {
-            await productService.deleteProduct(req.body.products);
+            await productService.deleteProducts(req.body.items);
             res.json();
         } catch (error) {
             next(error);
@@ -117,6 +119,25 @@ class ProductController {
         try {
             const products = await productService.getProductsList(req.query.name);
             res.json(products);
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    public async getCsv(
+        req: TypedRequestBody<{ items: string[]; }>,
+        res: Response,
+        next: NextFunction,
+    ): Promise<void> {
+        try {
+            const fileName = await productService.getCsv(req.body.items);
+            res.setHeader("Content-Type", "text/csv");
+            res.download(fileName, (err) => {
+                console.log(err);
+                if (err) {
+                    res.sendStatus(500);
+                }
+            });
         } catch (error) {
             next(error);
         }

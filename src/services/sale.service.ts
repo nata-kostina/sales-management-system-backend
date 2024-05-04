@@ -1,7 +1,10 @@
 import { FilterQuery, Types } from "mongoose";
+import * as csv from "fast-csv";
+import fs from "fs";
+import path from "path";
 import { SaleDto } from "../dtos/sale/sale.dto";
-import { ISale } from "../models/sale/sale.interface";
-import { PopulatedSaleProduct, Sale } from "../models/sale/sale.model";
+import { ISale, ISaleCsvItem } from "../models/sale/sale.interface";
+import { PopulatedCsvSaleProduct, PopulatedSaleProduct, Sale } from "../models/sale/sale.model";
 import { ISaleStatus } from "../models/sale-status/sale-status.interface";
 import { IPayment } from "../models/payment/payment.interface";
 import { ICustomer } from "../models/customer/customer.interface";
@@ -9,9 +12,10 @@ import { SaleStatus } from "../models/sale-status/sales-status.model";
 import { SaleStatusDto } from "../dtos/sale-status/sale-status.dto";
 import { PaymentDto } from "../dtos/payment/payment.dto";
 import { Payment } from "../models/payment/payment.model";
-import { sortByPriority } from "../utils";
+import { createDateForFile, sortByPriority } from "../utils";
 import { Customer } from "../models/customer/customer.model";
 import { ISaleDbDto } from "../dtos/sale/sale_db.dto.interface";
+import { generatedFilesPath } from "../../constants";
 
 class SaleService {
     public async getSales(
@@ -27,20 +31,17 @@ class SaleService {
     ): Promise<{ sales: SaleDto[]; total: number; }> {
         const filter: FilterQuery<ISale> = {};
         if (reference) {
-            // filter.reference = { $regex: reference, $options: "i" };
             filter.reference = reference;
         }
         const customersIdsByName: Types.ObjectId[] = [];
         const customersIdsByEmail: Types.ObjectId[] = [];
         if (customer) {
             const customers = await Customer.find({ name: { $regex: customer, $options: "i" } });
-            customers.forEach((customer) => customersIdsByName.push(customer._id));
-            // filter.customer = { $in: customerIds };
+            customers.forEach((c) => customersIdsByName.push(c._id));
         }
         if (email) {
             const customers = await Customer.find({ email: { $regex: email, $options: "i" } });
-            customers.forEach((customer) => customersIdsByEmail.push(customer._id));
-            // filter.customer = { $in: customerIds };
+            customers.forEach((c) => customersIdsByEmail.push(c._id));
         }
         if (customer || email) {
             filter.customer = { $in: [...customersIdsByName, ...customersIdsByEmail] };
@@ -51,12 +52,9 @@ class SaleService {
         if (payment) {
             filter.payment = { $in: payment.split(",").map((st) => new Types.ObjectId(st)) };
         }
-        // if (sku) {
-        //     filter.sku = { $regex: sku };
-        // }
-        // if (brand) {
-        //     filter.brand = { $all: brand.split(",").map((c) => new Types.ObjectId(c)) };
-        // }
+        filter.deleted = false;
+        console.log("sort: ", sort);
+        console.log("order === 'ascend' ? 1 : -1: ", order === "ascend" ? 1 : -1);
         const sales = await Sale
             .find(filter)
             .sort({ [sort]: order === "ascend" ? 1 : -1 });
@@ -74,11 +72,7 @@ class SaleService {
             { path: "customer", model: "Customer", select: "_id name email phone" },
             { path: "products.product", model: "Product", select: "_id name images" },
         ]);
-        // populatedDocuments.forEach((doc) => console.log(doc));
-        // console.log({ populatedDocuments });
 
-        // console.log(...(populatedDocuments[1].products));
-        // console.log([...populatedDocuments[0].products]);
         const saleDtos: SaleDto[] = populatedDocuments.map(
             (sale) => new SaleDto(sale),
         );
@@ -119,7 +113,7 @@ class SaleService {
         const lastSale = await Sale.findOne().sort({ createdAt: -1 });
         const reference = lastSale ? (Number.parseInt(lastSale.reference, 10) + 1).toString().padStart(4, "0") : "0001";
         const newSale = await Sale.create({ ...payload, reference });
-        const sale = await Sale.findOne({ _id: newSale._id })
+        const sale = await Sale.findOne({ _id: newSale._id, deleted: false })
             .populate<{
                 status: ISaleStatus & { _id: Types.ObjectId; };
             }>("status", "_id name")
@@ -137,7 +131,7 @@ class SaleService {
     }
 
     public async getSale(id?: string): Promise<SaleDto> {
-        const sale = await Sale.findOne({ _id: id })
+        const sale = await Sale.findOne({ _id: id, deleted: false })
             .populate<{
                 status: ISaleStatus & { _id: Types.ObjectId; };
             }>("status", "_id name")
@@ -158,9 +152,9 @@ class SaleService {
         payload: ISaleDbDto,
         id: string,
     ): Promise<SaleDto> {
-        const sale = await Sale.findOne({ _id: id });
+        const sale = await Sale.findOne({ _id: id, deleted: false });
         await sale.updateOne({ ...payload });
-        const updatedSale = await Sale.findOne({ _id: id })
+        const updatedSale = await Sale.findOne({ _id: id, deleted: false })
             .populate<{
                 status: ISaleStatus & { _id: Types.ObjectId; };
             }>("status", "_id name")
@@ -178,8 +172,68 @@ class SaleService {
         return saleDto;
     }
 
-    public async deleteSale(sales: string[]): Promise<void> {
-        await Sale.deleteMany({ _id: { $in: sales } });
+    public async deleteSale(sales?: string[]): Promise<void> {
+        let salesToDelete;
+
+        if (sales && sales.length > 0) {
+            salesToDelete = await Sale.find({ _id: { $in: sales }, deleted: false });
+        } else {
+            salesToDelete = await Sale.find({ deleted: false });
+        }
+
+        for (const sale of salesToDelete) {
+            await Sale.updateOne({ _id: sale._id }, { $set: { deleted: true } });
+        }
+    }
+
+    public async getCsv(sales: string[]): Promise<string> {
+        const dbData = await Sale.find(sales.length === 0 ? { deleted: false } : { _id: { $in: sales }, deleted: false })
+            .populate<{
+                status: ISaleStatus & { _id: Types.ObjectId; };
+            }>("status", "name")
+            .populate<{
+                payment: IPayment & { _id: Types.ObjectId; };
+            }>("payment", "name")
+            .populate<{
+                customer: ICustomer & { _id: Types.ObjectId; };
+            }>("customer")
+            .populate<{
+                products: PopulatedCsvSaleProduct[];
+            }>("products.product", "_id name", "Product");
+        return new Promise<string>((resolve, reject) => {
+            const fileName = path.join(generatedFilesPath, `sales_data_${createDateForFile()}.csv`);
+            const csvFile = fs.createWriteStream(fileName);
+
+            const data: ISaleCsvItem[] = [];
+            for (const sale of dbData) {
+                for (const product of sale.products) {
+                    data.push({
+                        reference: `="${sale.reference}"`,
+                        date: sale.date.toISOString(),
+                        customerId: sale.customer._id.toString(),
+                        customerEmail: sale.customer.email,
+                        customerName: sale.customer.name,
+                        payment: sale.payment.name,
+                        status: sale.status.name,
+                        paid: sale.paid,
+                        total: sale.total,
+                        productId: product._doc.product._id.toString(),
+                        productName: product._doc.product.name,
+                        pricePerProduct: product._doc.price,
+                        quantity: product._doc.quantity,
+                    });
+                }
+            }
+            csvFile.write("sep=,\n");
+            const csvStream = csv.format({ headers: true });
+            csvStream.pipe(csvFile);
+            csvStream.on("end", () => {
+                csvFile.end(() => resolve(fileName));
+            });
+            csvStream.on("error", () => reject());
+            data.forEach(row => csvStream.write(row));
+            csvStream.end();
+        });
     }
 }
 
