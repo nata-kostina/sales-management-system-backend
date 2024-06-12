@@ -34,7 +34,7 @@ module.exports = {
         project: ["./tsconfig.json"],
     },
 
-    ignorePatterns: [".eslintrc.cjs"],
+    ignorePatterns: [".eslintrc.cjs", "/dist/*"],
     rules: {
         semi: ["error", "always"],
         reportUnusedDisableDirectives: "off",

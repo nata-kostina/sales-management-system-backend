@@ -1,1 +1,0 @@
-{"version":3,"file":"sale-status.dto.js","sourceRoot":"","sources":["../../../../src/dtos/sale-status/sale-status.dto.ts"],"names":[],"mappings":"AAGA,MAAM,OAAO,aAAa;IACf,EAAE,CAAS;IACX,IAAI,CAAc;IAClB,QAAQ,CAAS;IACxB,YAAmB,KAA6C;QAC5D,IAAI,CAAC,EAAE,GAAG,KAAK,CAAC,GAAG,CAAC,QAAQ,EAAE,CAAC;QAC/B,IAAI,CAAC,IAAI,GAAG,KAAK,CAAC,IAAI,CAAC;IAC3B,CAAC;CACJ"}
