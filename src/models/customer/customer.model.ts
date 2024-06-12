@@ -9,14 +9,21 @@ const CustomerSchema = new mongoose.Schema<ICustomer>(
         },
         country: {
             type: {
-                id: Number,
-                name: String,
+                id: {
+                    type: Number,
+                    required: true,
+                },
+                name: {
+                    type: String,
+                    required: true,
+                },
             },
             required: true,
         },
         email: {
             type: String,
             required: true,
+            unique: true,
         },
         phone: {
             type: String,
@@ -24,15 +31,27 @@ const CustomerSchema = new mongoose.Schema<ICustomer>(
         },
         city: {
             type: {
-                id: Number,
-                name: String,
+                id: {
+                    type: Number,
+                    required: true,
+                },
+                name: {
+                    type: String,
+                    required: true,
+                },
             },
             required: true,
         },
         state: {
             type: {
-                id: Number,
-                name: String,
+                id: {
+                    type: Number,
+                    required: true,
+                },
+                name: {
+                    type: String,
+                    required: true,
+                },
             },
             required: true,
         },
@@ -40,7 +59,11 @@ const CustomerSchema = new mongoose.Schema<ICustomer>(
             type: String,
             required: true,
         },
-        deleted: { type: Boolean, default: false },
+        deleted: {
+            type: Boolean,
+            required: true,
+            default: false,
+        },
     },
     {
         timestamps: true,

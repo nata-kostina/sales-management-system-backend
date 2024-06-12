@@ -1,3 +1,9 @@
+import mongoose from "mongoose";
+import { Customer } from "./models/customer/customer.model";
+import { Payment } from "./models/payment/payment.model";
+import { Product } from "./models/product/product.model";
+import { SaleStatus } from "./models/sale-status/sales-status.model";
+
 interface WithPriority {
     priority: number;
 }
@@ -50,3 +56,76 @@ export const monthNames = [
     "May", "Jun", "Jul", "Aug",
     "Sep", "Oct", "Nov", "Dec",
 ];
+
+export const generateSales = async (): Promise<void> => {
+    const getRandom = (min: number, max: number) => {
+        return Math.round(Math.random() * (max - min) + min);
+    };
+
+    const months31 = [1, 3, 5, 7, 8, 10, 12];
+
+    const randomDate = () => {
+        const year = getRandom(2022, 2024);
+        const month = year === 2024 ? getRandom(1, 4) : getRandom(1, 12);
+        const date = months31.includes(month) ? getRandom(1, 31) : month === 2 ? getRandom(1, 28) : getRandom(1, 30);
+        const result = `${year}-${month < 10 ? `0${month}` : month}-${date < 10 ? `0${date}` : date}T11:00:00`;
+        return result;
+    };
+
+    const totalPayments = ["65d84cf0ed0d25528acfc5cc", "65d84cf0ed0d25528acfc5d0"];
+    const products = await Product.find();
+    const productsIdsPrices = products.map((p) => ({ id: p._id.toString(), price: p.price }));
+    const customers = await Customer.find();
+    const customersIds = customers.map((c) => c._id.toString());
+    const payments = await Payment.find();
+    const paymentsIds = payments.map((c) => c._id.toString());
+    const statuses = await SaleStatus.find();
+    const statusesIds = statuses.map((c) => c._id.toString());
+
+    const randomProducts = () => {
+        const productsNum = getRandom(1, 3);
+        const products = [];
+        const randomIds: number[] = [];
+        let total = 0;
+        for (let i = 0; i < productsNum; i++) {
+            let randomId = null;
+            while (randomId === null || randomIds.includes(randomId)) {
+                randomId = getRandom(0, productsIdsPrices.length - 1);
+            }
+            const quantity = getRandom(1, 10);
+            const product = {
+                product: new mongoose.Types.ObjectId(productsIdsPrices[randomId].id),
+                price: productsIdsPrices[randomId].price,
+                quantity,
+                total: quantity * productsIdsPrices[randomId].price,
+            };
+            total += quantity * productsIdsPrices[randomId].price;
+            products.push(product);
+        }
+        return { products, total };
+    };
+
+    const allSales = [];
+
+    for (let i = 0; i < 200; i++) {
+        const { products, total } = randomProducts();
+        const payment = paymentsIds[getRandom(0, paymentsIds.length - 1)];
+        const paid = totalPayments.includes(payment) ? total : 0;
+        const id = (i + 4).toString();
+        const sale = {
+            reference: id.padStart(4, "0"),
+            date: new Date(randomDate()),
+            payment: new mongoose.Types.ObjectId(payment),
+            status: new mongoose.Types.ObjectId(statusesIds[getRandom(0, statusesIds.length - 1)]),
+            customer: new mongoose.Types.ObjectId(customersIds[getRandom(0, customersIds.length - 1)]),
+            products,
+            total,
+            paid,
+            deleted: false,
+        };
+        allSales.push(sale);
+    }
+    allSales.sort((a, b) => +new Date(a.date) - (+(new Date(b.date))));
+    allSales.forEach((s, idx) => { s.reference = ((idx + 1).toString()).padStart(4, "0"); });
+    JSON.stringify(allSales);
+};

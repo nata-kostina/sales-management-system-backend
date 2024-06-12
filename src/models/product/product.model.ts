@@ -7,7 +7,7 @@ const ProductSchema = new mongoose.Schema<IProduct>(
         name: {
             type: String,
             required: true,
-            max: 50,
+            unique: true,
         },
         brand: {
             type: Schema.Types.ObjectId,
@@ -31,9 +31,18 @@ const ProductSchema = new mongoose.Schema<IProduct>(
         images: {
             type: [
                 {
-                    originalname: String,
-                    filename: String,
-                    path: String,
+                    originalname: {
+                        type: String,
+                        required: true,
+                    },
+                    filename: {
+                        type: String,
+                        required: true,
+                    },
+                    path: {
+                        type: String,
+                        required: true,
+                    },
                 },
             ],
         },
@@ -48,7 +57,7 @@ const ProductSchema = new mongoose.Schema<IProduct>(
                 },
             ],
         },
-        deleted: { type: Boolean, default: false },
+        deleted: { type: Boolean, default: false, required: true },
     },
     {
         timestamps: true,

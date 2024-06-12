@@ -133,7 +133,6 @@ class ProductController {
             const fileName = await productService.getCsv(req.body.items);
             res.setHeader("Content-Type", "text/csv");
             res.download(fileName, (err) => {
-                console.log(err);
                 if (err) {
                     res.sendStatus(500);
                 }

@@ -35,10 +35,10 @@ class CategoryService {
         };
     }
 
-    public async getCategoryList(): Promise<CategoryDto[]> {
+    public async getCategoryList(): Promise<{ id: string; name: string; }[]> {
         const categories = await Category.find({}, "name");
-        const categoryDtos: CategoryDto[] = categories.map(
-            (category) => new CategoryDto(category),
+        const categoryDtos: { id: string; name: string; }[] = categories.map(
+            (category) => ({ id: category._id.toString(), name: category.name }),
         );
         return [...categoryDtos];
     }
@@ -81,7 +81,6 @@ class CategoryService {
     public async addCategory(payload: ICategoryDb): Promise<CategoryDto> {
         const newCategory = await Category.create(payload);
         const category = await Category.findOne({ _id: newCategory._id, deleted: false });
-
         const categoryDto: CategoryDto = new CategoryDto(category);
         return categoryDto;
     }
@@ -137,6 +136,10 @@ class CategoryService {
             data.forEach(row => csvStream.write(row));
             csvStream.end();
         });
+    }
+
+    private validate() {
+
     }
 }
 

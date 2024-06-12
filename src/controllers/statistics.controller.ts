@@ -35,7 +35,6 @@ class StatisticsController {
         next: NextFunction,
     ): Promise<void> {
         try {
-            console.log(req.query);
             const data = await statisticsService.getCategoriesSalesStatistics(req.query.option, req.query.year);
             res.json(data);
         } catch (error) {

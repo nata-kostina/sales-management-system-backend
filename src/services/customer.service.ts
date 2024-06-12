@@ -67,7 +67,6 @@ class CustomerService {
         payload: ICustomer,
         id: string,
     ): Promise<CustomerDto> {
-        console.log("updateCustomer: ", payload);
         const customer = await Customer.findOne({ _id: id, deleted: false });
         await customer.updateOne({ ...payload });
 
@@ -78,8 +77,6 @@ class CustomerService {
     }
 
     public async addCustomer(payload: ICustomer): Promise<CustomerDto> {
-        console.log("addCustomer: ", payload);
-
         const newCustomer = await Customer.create(payload);
         const customer = await Customer.findOne({ _id: newCustomer._id });
 
@@ -99,15 +96,15 @@ class CustomerService {
         }
     }
 
-    public async getCustomersList(name?: string): Promise<{ customers: CustomerDto[]; }> {
+    public async getCustomersList(name?: string): Promise<{ customers: { id: string; name: string; }[]; }> {
         const filter: FilterQuery<ICustomer> = {};
         if (name) {
             filter.name = { $regex: name, $options: "i" };
         }
         const customers = await Customer.find(filter);
 
-        const customerDtos: CustomerDto[] = customers.map(
-            (customer) => new CustomerDto(customer),
+        const customerDtos: { id: string; name: string; }[] = customers.map(
+            (customer) => ({ id: customer._id.toString(), name: customer.name }),
         );
         return { customers: customerDtos };
     }

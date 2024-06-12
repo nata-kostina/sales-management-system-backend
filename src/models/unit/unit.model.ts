@@ -6,6 +6,11 @@ const UnitSchema = new mongoose.Schema<IUnit>(
         name: {
             type: String,
             required: true,
+            unique: true,
+        },
+        priority: {
+            type: Number,
+            required: true,
         },
     },
     {

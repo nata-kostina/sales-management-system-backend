@@ -6,6 +6,7 @@ const PaymentSchema = new mongoose.Schema<IPayment>(
         name: {
             type: String,
             required: true,
+            unique: true,
         },
         priority: {
             type: Number,

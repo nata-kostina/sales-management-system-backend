@@ -12,7 +12,7 @@ export class ProductDto implements IProductDto {
     public id: string;
     public name: string;
     public brand: IBrandDto | null;
-    public unit: IUnitDto | null;
+    public unit: Omit<IUnitDto, "priority"> | null;
     public sku: string;
     public price: number;
     public quantity: number;

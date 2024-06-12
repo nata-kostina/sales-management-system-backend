@@ -3,8 +3,8 @@ import { IImage } from "../../types";
 export interface ICategory {
     name: string;
     images: IImage[];
-    shortDescription: string;
-    longDescription: string;
+    shortDescription: string | null;
+    longDescription: string | null;
     deleted: boolean;
 }
 

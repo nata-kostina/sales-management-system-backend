@@ -70,7 +70,6 @@ class StatisticsService {
 
     public async getGeoSalesStatistics(year: string | null): Promise<IGetSalesStatisticsResponse> {
         const { maxDate, minDate } = await this.getMinMaxSalesDates();
-        // let sales: ISale[] = await Sale.find();
         let sales = await Sale.find({ deleted: false }).populate<{
             customer: ICustomer & { _id: Types.ObjectId; };
         }>("customer", "country");
@@ -97,17 +96,13 @@ class StatisticsService {
     }
 
     public async getCategoriesSalesStatistics(option: string, year: string | null): Promise<IGetSalesStatisticsByCategoriesResponse> {
-        console.log({ option });
-        console.log({ year });
         const sales = await Sale.find({ deleted: false });
         const { maxDate, minDate } = await this.getMinMaxSalesDates();
         const data: SaleStatisticsByCategoriesData = [];
         const header = await Category.find().then((res) => res.map((category) => category.name));
-        const categoriesNum = header.length;
 
         if (option === SaleStatisticsOption.ByMonth) {
             header.splice(0, 0, "Month");
-
             const yearParameter = year ? +year : new Date().getFullYear();
             const currentYearSales = sales.filter((sale) => sale.date.getFullYear() === yearParameter);
             if (currentYearSales.length === 0) {
@@ -119,13 +114,13 @@ class StatisticsService {
             }
 
             const monthlyByCategory: Record<string, Record<string, number>> = {};
-
             for (let i = 0; i < currentYearSales.length; i++) {
                 const month = currentYearSales[i].date.getMonth();
                 for (const product of currentYearSales[i].products) {
                     const productDb = await Product.findOne({ _id: product.product }).populate<{
                         categories: Array<ICategory & { _id: Types.ObjectId; }>;
                     }>("categories");
+
                     if (productDb) {
                         for (let i = 0; i < productDb.categories.length; i++) {
                             const category = productDb.categories[i].name;
@@ -141,11 +136,23 @@ class StatisticsService {
                     }
                 }
             }
-            // const
             data.push(header);
-            Object.keys(monthlyByCategory).forEach((key) => {
-                const keyValues = Object.values(monthlyByCategory[key]);
-                data.push([key, ...keyValues]);
+            const sortedMonthlyByCategory: Record<string, Record<string, number>> = {};
+            monthNames.forEach((month) => {
+                if (monthlyByCategory.hasOwnProperty(month)) {
+                    sortedMonthlyByCategory[month] = monthlyByCategory[month];
+                }
+            });
+            Object.keys(sortedMonthlyByCategory).forEach((month) => {
+                const valuesArr = new Array(header.length - 1).fill(0);
+                const monthStatistics = sortedMonthlyByCategory[month];
+                header.forEach((category, idx) => {
+                    const categoryStatistics = monthStatistics[category];
+                    if (categoryStatistics !== undefined) {
+                        valuesArr[idx - 1] = categoryStatistics;
+                    }
+                });
+                data.push([month, ...valuesArr]);
             });
         } else {
             if (sales.length === 0) {
@@ -179,16 +186,23 @@ class StatisticsService {
                     }
                 }
             }
-            Object.keys(yearlyByCategory).forEach((key) => {
-                const keyValues = Object.values(yearlyByCategory[key]);
-                data.push([key, ...keyValues]);
+            const years = Object.keys(yearlyByCategory).sort((a, b) => Number.parseInt(a, 10) - Number.parseInt(b, 10));
+            const sortedYearlyByCategory: Record<string, Record<string, number>> = {};
+            years.forEach((year) => {
+                sortedYearlyByCategory[year] = yearlyByCategory[year];
+            });
+            Object.keys(sortedYearlyByCategory).forEach((year) => {
+                const valuesArr = new Array(header.length - 1).fill(0);
+                const yearStatistics = sortedYearlyByCategory[year];
+                header.forEach((category, idx) => {
+                    const categoryStatistics = yearStatistics[category];
+                    if (categoryStatistics !== undefined) {
+                        valuesArr[idx - 1] = categoryStatistics;
+                    }
+                });
+                data.push([year, ...valuesArr]);
             });
         }
-        data.forEach((record) => {
-            for (let i = record.length; i < categoriesNum + 1; i++) {
-                record.push(0);
-            }
-        });
         return { data, minDate, maxDate };
     }
 
@@ -253,8 +267,7 @@ class StatisticsService {
                 },
             },
         ]);
-        console.log(minmax);
-        if (minmax.length === 2) {
+        if (Array.isArray(minmax) && minmax[0]?.minDate && minmax[0]?.maxDate) {
             const minDate = minmax[0].minDate;
             const maxDate = minmax[0].maxDate;
             return { maxDate, minDate };
@@ -348,13 +361,6 @@ class StatisticsService {
         const previousWeekEndDate = new Date(currentWeekEndDate);
         previousWeekEndDate.setDate(previousWeekEndDate.getDate() - 7);
 
-        console.log({
-            currentWeekStartDate,
-            currentWeekEndDate,
-            previousWeekStartDate,
-            previousWeekEndDate,
-        });
-
         const currentWeekPipeline: PipelineStage[] = [
             {
                 $match: {
@@ -398,11 +404,6 @@ class StatisticsService {
             totalPreviousWeekSales: number;
         }>(previousWeekPipeline);
 
-        console.log({ currentWeekSales });
-        console.log({ previousWeekSales });
-        // previous sales  = 100%
-        // current - previous =  ?
-        // ((current - previous) * 100) / previous sales
         let weeklyChange = 0;
         if (currentWeekSales.length > 0 && previousWeekSales.length > 0) {
             weeklyChange = ((currentWeekSales[0].totalCurrentWeekSales - previousWeekSales[0].totalPreviousWeekSales)

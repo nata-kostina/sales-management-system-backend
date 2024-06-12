@@ -39,24 +39,6 @@ class SaleController {
         }
     }
 
-    public async getStatuses(req: Request, res: Response, next: NextFunction): Promise<void> {
-        try {
-            const statuses = await saleService.getStatuses();
-            res.json({ statuses });
-        } catch (error) {
-            next(error);
-        }
-    }
-
-    public async getPayments(req: Request, res: Response, next: NextFunction): Promise<void> {
-        try {
-            const payments = await saleService.getPayments();
-            res.json({ payments });
-        } catch (error) {
-            next(error);
-        }
-    }
-
     public async getFormOptions(
         req: Request,
         res: Response,
@@ -135,7 +117,6 @@ class SaleController {
             const fileName = await saleService.getCsv(req.body.items);
             res.setHeader("Content-Type", "text/csv");
             res.download(fileName, (err) => {
-                console.log(err);
                 if (err) {
                     res.sendStatus(500);
                 }

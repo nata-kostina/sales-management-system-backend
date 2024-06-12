@@ -16,7 +16,7 @@ import { IProduct, IProductCsvItem } from "../models/product/product.interface";
 import { IProductDb } from "../dtos/product/product_db.interface";
 import { generatedFilesPath, uploadsPath } from "../../constants";
 import { IProductListDto, ProductListDto } from "../dtos/product/product_list.dto";
-import { createDateForFile } from "../utils";
+import { createDateForFile, sortByPriority } from "../utils";
 import { IBrand } from "../models/brand/brand.interface";
 import { IUnit } from "../models/unit/unit.interface";
 
@@ -194,7 +194,7 @@ class ProductService {
         const brands = await Brand.find();
 
         const categoryDtos: CategoryDto[] = categories.map((category) => new CategoryDto(category));
-        const unitDtos: UnitDto[] = units.map((unit) => new UnitDto(unit));
+        const unitDtos: UnitDto[] = units.sort(sortByPriority).map((unit) => new UnitDto(unit));
         const brandDtos: BrandDto[] = brands.map((brand) => new BrandDto(brand));
         return {
             categories: categoryDtos,

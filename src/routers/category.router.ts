@@ -6,7 +6,7 @@ import { uploadsMiddleware } from "../middlewares/uploads.middleware";
 export const categoryRouter = express.Router();
 
 categoryRouter.get("/", authMiddleware, categoryController.getCategories);
-categoryRouter.get("/list/", authMiddleware, categoryController.getCategoryList);
+categoryRouter.get("/list", authMiddleware, categoryController.getCategoryList);
 categoryRouter.post("/get-csv", authMiddleware, categoryController.getCsv);
 categoryRouter.get("/:id", authMiddleware, categoryController.getCategory);
 categoryRouter.put("/:id/edit", authMiddleware, uploadsMiddleware.array("images"), categoryController.editCategory);

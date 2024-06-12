@@ -6,6 +6,7 @@ const SaleStatusSchema = new mongoose.Schema<ISaleStatus>(
         name: {
             type: String,
             required: true,
+            unique: true,
         },
         priority: {
             type: Number,

@@ -1,7 +1,6 @@
 import express from "express";
 import { check } from "express-validator";
 import { authController } from "../controllers/auth.controller";
-import { authMiddleware } from "../middlewares/auth.middleware";
 
 export const authRouter = express.Router();
 
@@ -30,7 +29,4 @@ authRouter.post(
 );
 
 authRouter.post("/logout", authController.logout);
-
 authRouter.get("/refresh", authController.refresh);
-
-authRouter.get("/users", authMiddleware, authController.getUsers);

@@ -53,11 +53,10 @@ class SaleService {
             filter.payment = { $in: payment.split(",").map((st) => new Types.ObjectId(st)) };
         }
         filter.deleted = false;
-        console.log("sort: ", sort);
-        console.log("order === 'ascend' ? 1 : -1: ", order === "ascend" ? 1 : -1);
         const sales = await Sale
             .find(filter)
-            .sort({ [sort]: order === "ascend" ? 1 : -1 });
+            .sort(sort !== "customer" && sort !== "email" && sort !== "payment" && sort !== "status" ?
+                { [sort]: order === "ascend" ? 1 : -1 } : undefined);
         const total = sales.length;
         const slicedSales = sales.slice(skip, skip + limit);
         // eslint-disable-next-line no-spaced-func
@@ -69,13 +68,50 @@ class SaleService {
         }>(slicedSales, [
             { path: "status", model: "SaleStatus", select: "_id name" },
             { path: "payment", model: "Payment", select: "_id name" },
-            { path: "customer", model: "Customer", select: "_id name email phone" },
+            { path: "customer", model: "Customer", select: "_id name email phone country state city" },
             { path: "products.product", model: "Product", select: "_id name images" },
         ]);
-
         const saleDtos: SaleDto[] = populatedDocuments.map(
             (sale) => new SaleDto(sale),
         );
+
+        if (sort === "customer") {
+            const sortedSaleDtos = saleDtos.sort((a, b) => order === "ascend" ?
+                a.customer.name.localeCompare(b.customer.name) :
+                b.customer.name.localeCompare(a.customer.name));
+            return {
+                sales: sortedSaleDtos,
+                total,
+            };
+        }
+        if (sort === "email") {
+            const sortedSaleDtos = saleDtos.sort((a, b) => order === "ascend" ?
+                a.customer.email.localeCompare(b.customer.email) :
+                b.customer.email.localeCompare(a.customer.email));
+            return {
+                sales: sortedSaleDtos,
+                total,
+            };
+        }
+        if (sort === "payment") {
+            const sortedSaleDtos = saleDtos.sort((a, b) => order === "ascend" ?
+                a.payment.name.localeCompare(b.payment.name) :
+                b.payment.name.localeCompare(a.payment.name));
+            return {
+                sales: sortedSaleDtos,
+                total,
+            };
+        }
+        if (sort === "status") {
+            const sortedSaleDtos = saleDtos.sort((a, b) => order === "ascend" ?
+                a.status.name.localeCompare(b.status.name) :
+                b.status.name.localeCompare(a.status.name));
+            return {
+                sales: sortedSaleDtos,
+                total,
+            };
+        }
+
         return {
             sales: saleDtos,
             total,

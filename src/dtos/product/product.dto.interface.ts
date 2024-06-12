@@ -11,7 +11,7 @@ export interface IProductDto {
     price: number;
     quantity: number;
     images: IImage[];
-    unit: IUnitDto | null;
+    unit: Omit<IUnitDto, "priority"> | null;
     description: string | null;
     categories: (Omit<ICategoryDto, "deleted">)[];
 }

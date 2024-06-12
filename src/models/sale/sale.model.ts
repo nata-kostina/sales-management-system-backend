@@ -13,35 +13,29 @@ const SalesSchema = new mongoose.Schema<ISale>(
         date: {
             type: Date,
             required: true,
-            unique: false,
         },
         payment: {
             type: Schema.Types.ObjectId,
             ref: "Payment",
             required: true,
-            unique: false,
         },
         status: {
             type: Schema.Types.ObjectId,
             ref: "SaleStatus",
             required: true,
-            unique: false,
         },
         total: {
             type: Number,
             required: true,
-            unique: false,
         },
         paid: {
             type: Number,
             required: true,
-            unique: false,
         },
         customer: {
             type: Schema.Types.ObjectId,
             ref: "Customer",
             required: true,
-            unique: false,
         },
         products: {
             type: [
@@ -50,29 +44,24 @@ const SalesSchema = new mongoose.Schema<ISale>(
                         type: Schema.Types.ObjectId,
                         ref: "Product",
                         required: true,
-                        unique: false,
                     },
                     quantity: {
                         type: Number,
                         required: true,
-                        unique: false,
                     },
                     price: {
                         type: Number,
                         required: true,
-                        unique: false,
                     },
                     total: {
                         type: Number,
                         required: true,
-                        unique: false,
                     },
                 },
             ],
             required: true,
-            unique: false,
         },
-        deleted: { type: Boolean, default: false },
+        deleted: { type: Boolean, default: false, required: true },
     },
     {
         timestamps: true,

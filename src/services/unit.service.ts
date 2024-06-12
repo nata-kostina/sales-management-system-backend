@@ -7,14 +7,6 @@ class UnitService {
         const unitsDtos: UnitDto[] = units.map((unit) => new UnitDto(unit));
         return [...unitsDtos];
     }
-
-    public async getUnitList(): Promise<UnitDto[]> {
-        const units = await Unit.find({}, "name");
-        const unitsDtos: UnitDto[] = units.map(
-            (unit) => new UnitDto(unit),
-        );
-        return [...unitsDtos];
-    }
 }
 
 export const unitService = new UnitService();

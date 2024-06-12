@@ -29,7 +29,7 @@ class AuthController {
             const { email, password } = req.body;
             const userData = await userService.register(email, password);
             res.cookie("refreshToken", userData.refreshToken, {
-                maxAge: 2592000,
+                maxAge: 3600000,
                 httpOnly: true,
             });
             res.json(userData);
@@ -56,7 +56,7 @@ class AuthController {
             const { email, password } = req.body;
             const userData = await userService.login(email, password);
             res.cookie("refreshToken", userData.refreshToken, {
-                maxAge: 2592000,
+                maxAge: 3600000,
                 httpOnly: true,
             });
             res.json(userData);
