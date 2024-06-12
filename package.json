@@ -5,7 +5,7 @@
   "main": "index.ts",
   "type": "module",
   "scripts": {
-    "start": "node './**/*.ts' --loader ts-node/esm index.ts",
+    "start": "node --experimental-specifier-resolution=node --loader ts-node/esm index.ts",
     "dev:server": "nodemon --watch . --exec node --experimental-specifier-resolution=node --loader ts-node/esm index.ts",
     "dev": "nodemon index.ts"
   },
