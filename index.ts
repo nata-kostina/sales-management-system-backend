@@ -19,7 +19,7 @@ import { paymentRouter } from "./src/routers/payment.router";
 import { statisticsRouter } from "./src/routers/statistics.router";
 
 /* SERVER CONFIGURATION */
-const app = express();
+export const app = express();
 
 app.use(morgan("common"));
 
