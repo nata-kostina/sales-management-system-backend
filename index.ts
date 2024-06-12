@@ -1,4 +1,16 @@
+import http from "http";
+
 console.log("Hi");
+
+// Define the hostname and port
+const PORT = process.env.PORT || 9000;
+
+// Create the server
+http.createServer((req, res) => {
+    res.write("Hello World!"); // write a response to the client
+    res.end(); // end the response
+}).listen(PORT); // the server object listens on port 8080
+
 // import "dotenv/config";
 // import express from "express";
 // import morgan from "morgan";
