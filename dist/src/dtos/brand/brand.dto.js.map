@@ -1,0 +1,1 @@
+{"version":3,"file":"brand.dto.js","sourceRoot":"","sources":["../../../../src/dtos/brand/brand.dto.ts"],"names":[],"mappings":"AAIA,MAAM,OAAO,QAAQ;IACV,EAAE,CAAS;IACX,IAAI,CAAS;IAEpB,YAAmB,KAAwC;QACvD,IAAI,CAAC,EAAE,GAAG,KAAK,CAAC,GAAG,CAAC,QAAQ,EAAE,CAAC;QAC/B,IAAI,CAAC,IAAI,GAAG,KAAK,CAAC,IAAI,CAAC;IAC3B,CAAC;CACJ"}
