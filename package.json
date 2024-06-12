@@ -8,10 +8,11 @@
     "start": "node --loader ts-node/esm index.ts",
     "dev": "nodemon index.ts"
   },
-  "author": "",
+  "author": "natakostin123@gmail.com",
   "license": "ISC",
   "engines": {
-    "node": "20.x"
+    "node": "20.13.1",
+    "npm": "10.5.2"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
