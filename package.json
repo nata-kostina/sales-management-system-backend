@@ -6,8 +6,7 @@
   "type": "module",
   "scripts": {
     "start": "node --loader ts-node/esm index.ts",
-    "dev": "nodemon index.ts",
-    "heroku-postbuild": "node --loader ts-node/esm index.ts"
+    "dev": "nodemon index.ts"
   },
   "author": "",
   "license": "ISC",
