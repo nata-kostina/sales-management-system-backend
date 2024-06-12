@@ -90,7 +90,7 @@ class AuthController {
             console.log({ refreshTokenCookie: refreshToken });
             const userData = await userService.refreshToken(refreshToken);
             res.cookie("refreshToken", userData.refreshToken, {
-                maxAge: 2592000,
+                maxAge: 3600000,
                 httpOnly: true,
             });
             res.json(userData);
