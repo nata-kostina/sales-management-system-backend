@@ -55,7 +55,6 @@ app.use("/api/statistics", statisticsRouter);
 /* ERROR HANDLER MIDDLEWARE */
 
 app.use(errorMiddleware);
-
 /* MONGOOSE CONFIGURATION */
 mongoose
     .connect(process.env.MONGO_URL)
