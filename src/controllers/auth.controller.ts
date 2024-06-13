@@ -31,6 +31,7 @@ class AuthController {
             res.cookie("refreshToken", userData.refreshToken, {
                 maxAge: 3600000,
                 httpOnly: true,
+                sameSite: "none",
             });
             res.json(userData);
         } catch (error) {
@@ -58,6 +59,7 @@ class AuthController {
             res.cookie("refreshToken", userData.refreshToken, {
                 maxAge: 3600000,
                 httpOnly: true,
+                sameSite: "none",
             });
             res.json(userData);
         } catch (error) {
@@ -87,11 +89,11 @@ class AuthController {
     ) {
         try {
             const { refreshToken } = req.cookies;
-            console.log({ refreshTokenCookie: refreshToken });
             const userData = await userService.refreshToken(refreshToken);
             res.cookie("refreshToken", userData.refreshToken, {
                 maxAge: 3600000,
                 httpOnly: true,
+                sameSite: "none",
             });
             res.json(userData);
         } catch (error) {
