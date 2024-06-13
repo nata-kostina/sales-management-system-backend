@@ -32,6 +32,7 @@ class AuthController {
                 maxAge: 3600000,
                 httpOnly: true,
                 sameSite: "none",
+                secure: true,
             });
             res.json(userData);
         } catch (error) {
@@ -60,6 +61,7 @@ class AuthController {
                 maxAge: 3600000,
                 httpOnly: true,
                 sameSite: "none",
+                secure: true,
             });
             res.json(userData);
         } catch (error) {
@@ -94,6 +96,7 @@ class AuthController {
                 maxAge: 3600000,
                 httpOnly: true,
                 sameSite: "none",
+                secure: true,
             });
             res.json(userData);
         } catch (error) {
