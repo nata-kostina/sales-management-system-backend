@@ -77,6 +77,10 @@ export type IGetSalesStatisticsRequest = Request<{}, {}, {}, {
     year: string | null;
 } & Record<string, string>>;
 
+export type IGetGeneralSalesStatisticsRequest = Request<{}, {}, {}, {
+    tz: number;
+} & Record<string, string>>;
+
 export interface IGetGeneralStatisticsResponse {
     total: number;
     monthly: {

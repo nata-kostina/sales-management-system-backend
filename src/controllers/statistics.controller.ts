@@ -1,6 +1,6 @@
 import { NextFunction, Response, Request } from "express";
 import { statisticsService } from "../services/statistics.service";
-import { IGetSalesStatisticsRequest } from "../types";
+import { IGetGeneralSalesStatisticsRequest, IGetSalesStatisticsRequest } from "../types";
 
 class StatisticsController {
     public async getSalesStatistics(
@@ -56,12 +56,12 @@ class StatisticsController {
     }
 
     public async getGeneralStatistics(
-        req: Request,
+        req: IGetGeneralSalesStatisticsRequest,
         res: Response,
         next: NextFunction,
     ): Promise<void> {
         try {
-            const data = await statisticsService.getGeneralStatistics();
+            const data = await statisticsService.getGeneralStatistics(req.query.tz);
             res.json(data);
         } catch (error) {
             next(error);

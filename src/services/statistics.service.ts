@@ -248,11 +248,12 @@ class StatisticsService {
         return productDtos;
     }
 
-    public async getGeneralStatistics(): Promise<IGetGeneralStatisticsResponse> {
+    public async getGeneralStatistics(timezone: number): Promise<IGetGeneralStatisticsResponse> {
+        console.log({ timezone });
         const sales = await Sale.find({ deleted: false });
         const total = sales.reduce((acc, curr) => acc + curr.paid, 0);
-        const monthly = await this.getMonthlyStatistics();
-        const weekly = await this.getWeeklyStatistics();
+        const monthly = await this.getMonthlyStatistics(timezone);
+        const weekly = await this.getWeeklyStatistics(timezone);
 
         return { total, monthly, weekly };
     }
@@ -276,7 +277,7 @@ class StatisticsService {
         return { maxDate: currentDate, minDate: currentDate };
     }
 
-    private async getMonthlyStatistics(): Promise<{ amount: number; change: number; }> {
+    private async getMonthlyStatistics(timezone: number): Promise<{ amount: number; change: number; }> {
         const currentYear = new Date().getFullYear();
         const currentMonth = new Date().getMonth();
 
@@ -345,7 +346,7 @@ class StatisticsService {
         };
     }
 
-    private async getWeeklyStatistics(): Promise<{ amount: number; change: number; }> {
+    private async getWeeklyStatistics(timezone: number): Promise<{ amount: number; change: number; }> {
         const currentDate = new Date();
         const currentUTCDate = new Date(Date.UTC(
             currentDate.getUTCFullYear(),
@@ -359,20 +360,24 @@ class StatisticsService {
 
         console.log({ currentUTCDate });
 
-        const currentDayOfWeek = currentUTCDate.getDay() === 0 ? 6 : currentUTCDate.getDay() - 1;
-        const currentYear = currentUTCDate.getFullYear();
-        const currentMonth = currentUTCDate.getMonth();
-        const currentDay = currentUTCDate.getDate();
+        const currentDayOfWeek = currentUTCDate.getUTCDay() === 0 ? 6 : currentUTCDate.getUTCDay() - 1;
+
+        const currentYear = currentUTCDate.getUTCFullYear();
+        const currentMonth = currentUTCDate.getUTCMonth();
+        const currentDay = currentUTCDate.getUTCDate();
+        const currentHours = currentUTCDate.getUTCHours();
 
         console.log({ currentDate });
         console.log({ currentDayOfWeek });
         console.log({ currentYear });
         console.log({ currentMonth });
         console.log({ currentDay });
-
-        const currentWeekStartDate = new Date(currentYear, currentMonth, currentDay - currentDayOfWeek);
-        const currentWeekEndDate = new Date(currentYear, currentMonth, currentDay - currentDayOfWeek + 6, 23, 59, 59, 999);
-
+        console.log({ currentHours });
+        const timezoneOffset = timezone * 60 * 1000;
+        const currentWeekStartDate_utc = new Date(Date.UTC(currentYear, currentMonth, currentDay - currentDayOfWeek, 0, 0, 0, 0));
+        const currentWeekEndDate_utc = new Date(Date.UTC(currentYear, currentMonth, currentDay - currentDayOfWeek + 6, 23, 59, 59, 999));
+        const currentWeekStartDate = new Date(currentWeekStartDate_utc.getTime() + timezoneOffset);
+        const currentWeekEndDate = new Date(currentWeekEndDate_utc.getTime() + timezoneOffset);
         console.log({ currentWeekStartDate });
         console.log({ currentWeekEndDate });
         const previousWeekStartDate = new Date(currentWeekStartDate);
