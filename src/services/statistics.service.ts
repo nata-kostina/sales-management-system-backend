@@ -347,27 +347,40 @@ class StatisticsService {
 
     private async getWeeklyStatistics(): Promise<{ amount: number; change: number; }> {
         const currentDate = new Date();
-        const currentDayOfWeek = currentDate.getDay() === 0 ? 6 : currentDate.getDay() - 1;
-        const currentYear = currentDate.getFullYear();
-        const currentMonth = currentDate.getMonth();
-        const currentDay = currentDate.getDate();
+        const currentUTCDate = new Date(Date.UTC(
+            currentDate.getUTCFullYear(),
+            currentDate.getUTCMonth(),
+            currentDate.getUTCDate(),
+            currentDate.getUTCHours(),
+            currentDate.getUTCMinutes(),
+            currentDate.getUTCSeconds(),
+            currentDate.getUTCMilliseconds()
+        ));
 
-        console.log({currentDate});
-        console.log({currentDayOfWeek});
-        console.log({currentYear});
-        console.log({currentMonth});
-        console.log({currentDay});
+        console.log({ currentUTCDate });
+
+        const currentDayOfWeek = currentUTCDate.getDay() === 0 ? 6 : currentUTCDate.getDay() - 1;
+        const currentYear = currentUTCDate.getFullYear();
+        const currentMonth = currentUTCDate.getMonth();
+        const currentDay = currentUTCDate.getDate();
+
+        console.log({ currentDate });
+        console.log({ currentDayOfWeek });
+        console.log({ currentYear });
+        console.log({ currentMonth });
+        console.log({ currentDay });
 
         const currentWeekStartDate = new Date(currentYear, currentMonth, currentDay - currentDayOfWeek);
         const currentWeekEndDate = new Date(currentYear, currentMonth, currentDay - currentDayOfWeek + 6, 23, 59, 59, 999);
-        console.log({currentWeekStartDate});
-        console.log({currentWeekEndDate});
+
+        console.log({ currentWeekStartDate });
+        console.log({ currentWeekEndDate });
         const previousWeekStartDate = new Date(currentWeekStartDate);
         previousWeekStartDate.setDate(previousWeekStartDate.getDate() - 7);
-        console.log({previousWeekStartDate});
+        console.log({ previousWeekStartDate });
         const previousWeekEndDate = new Date(currentWeekEndDate);
         previousWeekEndDate.setDate(previousWeekEndDate.getDate() - 7);
-        console.log({previousWeekEndDate});
+        console.log({ previousWeekEndDate });
         // mongo: 2024-06-16T22:00:00.000+00:00
         // curr : 2024-06-16T22:00:00.000Z
         const currentWeekPipeline: PipelineStage[] = [
@@ -386,13 +399,13 @@ class StatisticsService {
                 },
             },
         ];
-        console.log({currentWeekPipeline});
+        console.log({ currentWeekPipeline });
 
         const currentWeekSales = await Sale.aggregate<{
             _id: null;
             totalCurrentWeekSales: number;
         }>(currentWeekPipeline);
-        console.log({currentWeekSales});
+        console.log({ currentWeekSales });
         const previousWeekPipeline: PipelineStage[] = [
             {
                 $match: {
