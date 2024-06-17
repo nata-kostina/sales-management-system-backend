@@ -352,15 +352,24 @@ class StatisticsService {
         const currentMonth = currentDate.getMonth();
         const currentDay = currentDate.getDate();
 
+        console.log({currentDate});
+        console.log({currentDayOfWeek});
+        console.log({currentYear});
+        console.log({currentMonth});
+        console.log({currentDay});
+
         const currentWeekStartDate = new Date(currentYear, currentMonth, currentDay - currentDayOfWeek);
         const currentWeekEndDate = new Date(currentYear, currentMonth, currentDay - currentDayOfWeek + 6, 23, 59, 59, 999);
-
+        console.log({currentWeekStartDate});
+        console.log({currentWeekEndDate});
         const previousWeekStartDate = new Date(currentWeekStartDate);
         previousWeekStartDate.setDate(previousWeekStartDate.getDate() - 7);
-
+        console.log({previousWeekStartDate});
         const previousWeekEndDate = new Date(currentWeekEndDate);
         previousWeekEndDate.setDate(previousWeekEndDate.getDate() - 7);
-
+        console.log({previousWeekEndDate});
+        // mongo: 2024-06-16T22:00:00.000+00:00
+        // curr : 2024-06-16T22:00:00.000Z
         const currentWeekPipeline: PipelineStage[] = [
             {
                 $match: {
@@ -377,12 +386,13 @@ class StatisticsService {
                 },
             },
         ];
+        console.log({currentWeekPipeline});
 
         const currentWeekSales = await Sale.aggregate<{
             _id: null;
             totalCurrentWeekSales: number;
         }>(currentWeekPipeline);
-
+        console.log({currentWeekSales});
         const previousWeekPipeline: PipelineStage[] = [
             {
                 $match: {
