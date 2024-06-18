@@ -249,7 +249,6 @@ class StatisticsService {
     }
 
     public async getGeneralStatistics(timezone: number): Promise<IGetGeneralStatisticsResponse> {
-        console.log({ timezone });
         const sales = await Sale.find({ deleted: false });
         const total = sales.reduce((acc, curr) => acc + curr.paid, 0);
         const monthly = await this.getMonthlyStatistics(timezone);
@@ -278,13 +277,17 @@ class StatisticsService {
     }
 
     private async getMonthlyStatistics(timezone: number): Promise<{ amount: number; change: number; }> {
-        const currentYear = new Date().getFullYear();
-        const currentMonth = new Date().getMonth();
+        const timezoneOffset = timezone * 60 * 1000;
+
+        const currentYear = new Date().getUTCFullYear();
+        const currentMonth = new Date().getUTCMonth();
 
         const previousMonth = currentMonth === 0 ? 11 : currentMonth - 1;
         const previousYear = currentMonth === 0 ? currentYear - 1 : currentYear;
 
-        const currentMonthStartDate = new Date(currentYear, currentMonth, 1);
+        const currentMonthStartDate_utc = new Date(Date.UTC(currentYear, currentMonth, 1, 0, 0, 0, 0));
+        const currentMonthStartDate = new Date(currentMonthStartDate_utc.getTime() + timezoneOffset);
+
         const currentMonthEndDate = new Date(currentYear, currentMonth + 1, 0, 23, 59, 59, 999);
 
         const previousMonthStartDate = new Date(previousYear, previousMonth, 1);
@@ -358,8 +361,6 @@ class StatisticsService {
             currentDate.getUTCMilliseconds()
         ));
 
-        console.log({ currentUTCDate });
-
         const currentDayOfWeek = currentUTCDate.getUTCDay() === 0 ? 6 : currentUTCDate.getUTCDay() - 1;
 
         const currentYear = currentUTCDate.getUTCFullYear();
@@ -367,27 +368,17 @@ class StatisticsService {
         const currentDay = currentUTCDate.getUTCDate();
         const currentHours = currentUTCDate.getUTCHours();
 
-        console.log({ currentDate });
-        console.log({ currentDayOfWeek });
-        console.log({ currentYear });
-        console.log({ currentMonth });
-        console.log({ currentDay });
-        console.log({ currentHours });
         const timezoneOffset = timezone * 60 * 1000;
         const currentWeekStartDate_utc = new Date(Date.UTC(currentYear, currentMonth, currentDay - currentDayOfWeek, 0, 0, 0, 0));
         const currentWeekEndDate_utc = new Date(Date.UTC(currentYear, currentMonth, currentDay - currentDayOfWeek + 6, 23, 59, 59, 999));
         const currentWeekStartDate = new Date(currentWeekStartDate_utc.getTime() + timezoneOffset);
         const currentWeekEndDate = new Date(currentWeekEndDate_utc.getTime() + timezoneOffset);
-        console.log({ currentWeekStartDate });
-        console.log({ currentWeekEndDate });
+
         const previousWeekStartDate = new Date(currentWeekStartDate);
         previousWeekStartDate.setDate(previousWeekStartDate.getDate() - 7);
-        console.log({ previousWeekStartDate });
         const previousWeekEndDate = new Date(currentWeekEndDate);
         previousWeekEndDate.setDate(previousWeekEndDate.getDate() - 7);
-        console.log({ previousWeekEndDate });
-        // mongo: 2024-06-16T22:00:00.000+00:00
-        // curr : 2024-06-16T22:00:00.000Z
+
         const currentWeekPipeline: PipelineStage[] = [
             {
                 $match: {
@@ -404,13 +395,12 @@ class StatisticsService {
                 },
             },
         ];
-        console.log({ currentWeekPipeline });
 
         const currentWeekSales = await Sale.aggregate<{
             _id: null;
             totalCurrentWeekSales: number;
         }>(currentWeekPipeline);
-        console.log({ currentWeekSales });
+
         const previousWeekPipeline: PipelineStage[] = [
             {
                 $match: {
